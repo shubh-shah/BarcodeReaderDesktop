@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>
+            Barcode Reader
+        </title>
+        <link rel="shortcut icon" href="images/logo_br.png">
+    </head>
+    <body style="background-color:#e4f0f0;">
+        <img id="image" src="images/Loading.webp" width="100" height="100" style="margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);">
+
+        <script>
+
+            fetch("http://localhost:8080/generate-qr",{ method: 'GET', mode: 'cors'}) 
+            .then(function (response) {
+                response.json().then(function(data){
+                    if(!data.status){
+                        console.log('Success:', data);
+                        document.getElementById("image").src = data.path;
+                        document.getElementById("image").width = data.width;
+                        document.getElementById("image").height = data.height;
+                    }else{
+                        console.error('Error:', data.error);
+                        document.getElementById("image").src = "images/Error.png";
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById("image").src = "images/Error.png";
+            });
+        </script>
+    </body>
+</html>
