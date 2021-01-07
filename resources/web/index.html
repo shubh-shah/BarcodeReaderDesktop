@@ -33,20 +33,13 @@
             }
             function shutdown(){
                 document.getElementById("status").src = "img/Loading.webp";
-                fetch("http://localhost:8080/actuator/shutdown",{ method: 'POST', mode:'no-cors'}) 
+                fetch("http://localhost:8080/shutdown",{ method: 'POST', mode:'no-cors'}) 
                 .then(function (response) {
                     console.log('Success:', response);
                     disc();
                 })
                 .catch((error) => {
                     console.error('Error:', error);
-                    fetch("http://localhost:8080/exit",{ method: 'POST'}) 
-                    .then(function (response) {
-                        response.json().then(function(data){
-                            console.log('Success:', data);
-                            disc();
-                        });
-                    })
                     document.getElementById("status").src = "img/Error.png";
                 });
             }

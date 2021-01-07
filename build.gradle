@@ -39,8 +39,16 @@ task pack(type: Exec) {
 	dependsOn copyFiles
 	dependsOn genJre
 	workingDir="${buildDir}"
-	commandLine 'cmd', '/c', "jpackage --type app-image -n BarcodeReader -i toPackage --main-jar BarcodeReader-1.0.1.jar --icon ../resources/logo_br.ico --runtime-image jruntime"
-	//"jpackage --type app-image --app-version 1.0.1 --description 'Barcode Reader Server Companion' --name BarcodeReader -i toPackage --main-jar BarcodeReader-1.0.1.jar --icon toPackage/logo_br.ico"
+	commandLine 'cmd', '/c', "jpackage --type app-image -n BarcodeReader --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\" -i toPackage --main-jar BarcodeReader-${version}.jar --icon ../resources/logo_br.ico --runtime-image jruntime"
+	//--win-shortcut --win-menu
+}
+
+task autoPack(type: Exec){
+	dependsOn makePretty
+	dependsOn copyFiles
+	workingDir="${buildDir}"
+	commandLine 'cmd', '/c', "jpackage --type app-image -n BarcodeReader --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\" -i toPackage --main-jar BarcodeReader-${version}.jar --icon ../resources/logo_br.ico"
+	
 }
 
 copyFiles.mustRunAfter(makePretty)
