@@ -56,6 +56,11 @@ public class BarcodeReaderApplication {
 		builder.headless(false).run(args);
 	}
 
+	@PostMapping("/shutdown")
+    public void shutdownContext() {
+		System.exit(0);
+	}
+
 	@CrossOrigin
 	@ResponseBody
 	@GetMapping(value="/")
