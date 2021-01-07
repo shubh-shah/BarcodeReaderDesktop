@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <title>
+            Barcode Reader
+        </title>
+        <link rel="shortcut icon" href="img/logo_br.png">
+        <link rel="stylesheet" href="css/index.css" >
+    </head>
+    <body>
+        <header>
+           <center><h2 class="headtext">Barcode Reader</h2></center> 
+        </header>
+        <div class="centerbody">
+            <center><a href="pair.html" class="pair">Pair device</a></center>
+            <br>
+            <br>
+            <center><button id="b2" onClick="shutdown()" class="exit">Server Shutdown</button></center>
+            <center><img src="img/Correct.png" id ="status" height=50 width=50 class="status"></center>
+        </div>
+        <script>
+            check();
+            function check(){
+                document.getElementById("status").src = "img/Loading.webp";
+                fetch("http://localhost:8080/",{method:'GET'})
+                .then(function (response) {
+                    console.log('Success:', response);
+                    document.getElementById("status").src = "img/Correct.png";
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    disc();
+                });
+            }
+            function shutdown(){
+                document.getElementById("status").src = "img/Loading.webp";
+                fetch("http://localhost:8080/actuator/shutdown",{ method: 'POST', mode:'no-cors'}) 
+                .then(function (response) {
+                    console.log('Success:', response);
+                    disc();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    fetch("http://localhost:8080/exit",{ method: 'POST'}) 
+                    .then(function (response) {
+                        response.json().then(function(data){
+                            console.log('Success:', data);
+                            disc();
+                        });
+                    })
+                    document.getElementById("status").src = "img/Error.png";
+                });
+            }
+            function disc(){
+                document.getElementById("status").src = "img/Disc.png";
+                var info = document.createElement("P"); 
+                info.innerHTML = "The Server isn't running, Please run the server application and reload this page";
+                info.setAttribute("class", "status");
+                info.setAttribute("style", "text-align: center;");
+                document.body.appendChild(info); 
+            }
+        </script>
+    </body>
+</html>

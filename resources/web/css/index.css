@@ -9,8 +9,7 @@
     display: inline-block;
     width: 250px;
     font-size: 16px;
-    border: 2px solid  #4CAF50; /* Green */
-    /* display: block; */
+    border: 2px solid  #4CAF50;
 }
   
 .pair:hover {
@@ -24,12 +23,11 @@
     background-color: #c5463d; 
     border-radius: 4px;
     color: white;
-    padding: 15px 32px;
+    padding: 7px 15px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    width: 250px;
-    font-size: 16px;
+    font-size: 14px;
     border: 2px solid  #c5463d; 
 }
 
@@ -58,7 +56,7 @@
 }
 
 body{
-    background-color:#ffffff;
+    background-color:#e4f0f0;
     font-family: Arial,"Helvetica Neue",Helvetica,sans-serif;
 }
 

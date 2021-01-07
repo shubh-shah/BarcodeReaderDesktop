@@ -2,7 +2,6 @@ package com.shubh.barcodereader;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import java.awt.Desktop;
 import java.awt.Robot;
 
 @SpringBootApplication
@@ -36,7 +34,6 @@ public class BarcodeReaderApplication {
 	private final int password_length = 13;
 	private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	private static SecureRandom rnd = new SecureRandom();
-	private int pairedDevices;
 
 	public BarcodeReaderApplication(){
 		StringBuilder sb = new StringBuilder(password_length);
@@ -59,19 +56,11 @@ public class BarcodeReaderApplication {
 		builder.headless(false).run(args);
 	}
 
-	@GetMapping(value="/", produces="text/html")
-	public String homepage(Model model) {
-		model.addAttribute("message", pairedDevices+" Paired Devices");
-		return "index";
-	}
-
 	@CrossOrigin
 	@ResponseBody
-	@GetMapping(value="/pair", produces = "application/json")
-	public String pair() throws IOException{
-		pairedDevices++;
-		Desktop.getDesktop().open(new File("./web/index.html"));
-		return "{\"message\":\"Success\"}";
+	@GetMapping(value="/")
+	public String homepage(){
+		return "{\"message\":\"Barcode Reader\"}";
 	}
 
 	@ResponseBody
