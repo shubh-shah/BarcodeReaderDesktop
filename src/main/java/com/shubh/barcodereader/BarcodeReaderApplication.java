@@ -34,8 +34,10 @@ public class BarcodeReaderApplication {
 	private final int password_length = 13;
 	private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	private static SecureRandom rnd = new SecureRandom();
+	public String QRPath;
 
 	public BarcodeReaderApplication(){
+		QRPath =  System.getProperty("user.home")+"/QRImage.png";
 		StringBuilder sb = new StringBuilder(password_length);
 		for(int i = 0; i < password_length; i++){
 			sb.append(AB.charAt(rnd.nextInt(AB.length())));
@@ -58,6 +60,13 @@ public class BarcodeReaderApplication {
 
 	@PostMapping("/shutdown")
     public void shutdownContext() {
+		File QRFile = new File(QRPath); 
+		if (QRFile.delete()) { 
+			System.out.println("Deleted the file: " + QRFile.getName());
+		} else {
+			System.out.println("Failed to delete the file.");
+		} 
+		System.out.println("Exiting System");
 		System.exit(0);
 	}
 
@@ -125,7 +134,7 @@ public class BarcodeReaderApplication {
 			BitMatrix bitMatrix = barcodeWriter.encode(QRString, BarcodeFormat.QR_CODE, 200, 200);
 			
 			//Write OR to file
-			File outputfile = new File("QRImage.png");
+			File outputfile = new File(QRPath);
 			out.path = outputfile.getAbsolutePath();
 			BufferedImage img = MatrixToImageWriter.toBufferedImage(bitMatrix);
 			out.height=img.getHeight();

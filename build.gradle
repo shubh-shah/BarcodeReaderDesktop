@@ -20,7 +20,7 @@ dependencies {
 }
 
 task makePretty(type: Delete) {
-  delete "${buildDir}/BarcodeReader", "${buildDir}/toPackage", "${buildDir}/jruntime"
+  delete "${buildDir}/BarcodeReader", "${buildDir}/toPackage", "${buildDir}/jruntime", "${buildDir}/BarcodeReader-${version}.exe" 
 }
 
 task copyFiles(type: Copy) {
@@ -40,7 +40,6 @@ task pack(type: Exec) {
 	dependsOn genJre
 	workingDir="${buildDir}"
 	commandLine 'cmd', '/c', "jpackage --type app-image -n BarcodeReader --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\" -i toPackage --main-jar BarcodeReader-${version}.jar --icon ../resources/logo_br.ico --runtime-image jruntime"
-	//--win-shortcut --win-menu
 }
 
 task autoPack(type: Exec){
@@ -48,7 +47,15 @@ task autoPack(type: Exec){
 	dependsOn copyFiles
 	workingDir="${buildDir}"
 	commandLine 'cmd', '/c', "jpackage --type app-image -n BarcodeReader --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\" -i toPackage --main-jar BarcodeReader-${version}.jar --icon ../resources/logo_br.ico"
-	
+}
+
+task packIns(type: Exec) {
+	dependsOn makePretty
+	dependsOn copyFiles
+	dependsOn genJre
+	workingDir="${buildDir}"
+	commandLine 'cmd', '/c', "jpackage -n BarcodeReader --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\" -i toPackage --main-jar BarcodeReader-${version}.jar --icon ../resources/logo_br.ico --runtime-image jruntime  --win-dir-chooser --win-shortcut --win-menu --win-menu-group \"Barcode Reader\""
+	// --add-launcher
 }
 
 copyFiles.mustRunAfter(makePretty)
