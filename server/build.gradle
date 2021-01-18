@@ -1,16 +1,10 @@
 plugins {
 	id 'org.springframework.boot' version '2.4.1'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-	id 'java'
 }
 
-group = 'com.shubh'
-version = '1.0.1'
-sourceCompatibility = '11'
-
-repositories {
-	mavenCentral()
-}
+description = 'Barcode Reader Companion Server'
+sourceCompatibility = '15'
 
 dependencies {
 	compile "com.google.zxing:core:3.3.0"
@@ -18,45 +12,3 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
-
-task makePretty(type: Delete) {
-  delete "${buildDir}/BarcodeReader", "${buildDir}/toPackage", "${buildDir}/jruntime", "${buildDir}/BarcodeReader-${version}.exe" 
-}
-
-task copyFiles(type: Copy) {
-	dependsOn bootJar
-    from /*"resources",*/ "$buildDir/libs"
-    into "$buildDir/toPackage"
-}
-
-task genJre(type: Exec) {
-	workingDir="${buildDir}"
-	commandLine 'cmd', '/c', "jlink --add-modules java.base,java.desktop,java.logging,java.naming,java.management,java.instrument,java.security.jgss --output jruntime --strip-debug --no-header-files --no-man-pages --strip-native-commands --compress 2"
-}
-
-task pack(type: Exec) {
-	dependsOn makePretty
-	dependsOn copyFiles
-	dependsOn genJre
-	workingDir="${buildDir}"
-	commandLine 'cmd', '/c', "jpackage --type app-image -n BarcodeReader --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\" -i toPackage --main-jar BarcodeReader-${version}.jar --icon ../resources/logo_br.ico --runtime-image jruntime"
-}
-
-task autoPack(type: Exec){
-	dependsOn makePretty
-	dependsOn copyFiles
-	workingDir="${buildDir}"
-	commandLine 'cmd', '/c', "jpackage --type app-image -n BarcodeReader --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\" -i toPackage --main-jar BarcodeReader-${version}.jar --icon ../resources/logo_br.ico"
-}
-
-task packIns(type: Exec) {
-	dependsOn makePretty
-	dependsOn copyFiles
-	dependsOn genJre
-	workingDir="${buildDir}"
-	commandLine 'cmd', '/c', "jpackage -n BarcodeReader --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\" -i toPackage --main-jar BarcodeReader-${version}.jar --icon ../resources/logo_br.ico --runtime-image jruntime  --win-dir-chooser --win-shortcut --win-menu --win-menu-group \"Barcode Reader\""
-	// --add-launcher
-}
-
-copyFiles.mustRunAfter(makePretty)
-genJre.mustRunAfter(copyFiles)

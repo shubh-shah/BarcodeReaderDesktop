@@ -1,0 +1,78 @@
+description = 'Barcode Reader Companion Application'
+
+allprojects {
+
+    group = 'com.shubh'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+}
+
+task makePretty(type: Delete) {
+    delete "${buildDir}"
+    doLast{
+        mkdir "build"
+    }
+}
+
+task copyFiles(type: Copy) {
+	dependsOn 'app:build'
+    dependsOn 'server:bootJar'
+    from "app/build/libs"
+    from "server/build/libs"
+    into "$buildDir/toPackage"
+}
+
+task genJre(type: Exec) {
+	workingDir="${buildDir}"
+	commandLine 'cmd', '/c', "jlink --add-modules java.base,java.desktop,java.logging,java.naming,java.management,java.instrument,java.security.jgss --output jruntime --strip-debug --no-header-files --no-man-pages --strip-native-commands --compress 2"
+}
+
+task packApp(type: Exec){
+	workingDir="${buildDir}"
+	commandLine 'cmd', '/c', "jpackage --type app-image -n \"Barcode Reader\" --app-version ${version} --description \"Barcode Reader Companion\" --vendor \"Shubh Shah\""+
+                " -i toPackage --main-jar app-${version}.jar --icon ../resources/logo_br.ico --runtime-image jruntime"
+}
+task packServer(type: Exec){
+	workingDir="${buildDir}"
+    commandLine 'cmd', '/c', "jpackage --type app-image -n \"server\" --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\""+
+                " -i toPackage --main-jar server-${version}.jar --icon ../resources/logo_br.ico --runtime-image jruntime"
+}
+
+task copyConfig(type: Copy){
+    from file("$buildDir/server/app/server.cfg")
+    into file("$buildDir/Barcode Reader/app")
+}
+
+task pack(type: Copy) {
+	dependsOn makePretty
+	dependsOn copyFiles
+	dependsOn genJre
+    dependsOn packApp
+    dependsOn packServer
+    dependsOn copyConfig
+    from file("$buildDir/server/server.exe")
+    from file("$buildDir/server/server.ico")
+    into file("$buildDir/Barcode Reader/")
+}
+
+task packIns(type: Exec) {
+	dependsOn pack
+	workingDir="${buildDir}"
+	commandLine 'cmd', '/c', "jpackage --type exe --app-image \"Barcode Reader\" --name \"Barcode Reader\"  --win-dir-chooser --win-shortcut --win-menu --win-menu-group \"Barcode Reader\""
+}
+
+copyFiles.mustRunAfter(makePretty)
+genJre.mustRunAfter(makePretty)
+packApp.mustRunAfter(genJre)
+packServer.mustRunAfter(genJre)
+packApp.mustRunAfter(copyFiles)
+packServer.mustRunAfter(copyFiles)
+copyConfig.mustRunAfter(packApp)
+copyConfig.mustRunAfter(packServer)

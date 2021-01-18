@@ -1,0 +1,16 @@
+plugins {
+    id 'application'
+}
+
+description = 'Barcode Reader Companion Application UI'
+sourceCompatibility = '15'
+
+application {
+    mainClass = 'com.shubh.barcodereader.BarcodeReader'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.shubh.barcodereader.BarcodeReader"
+    }
+}
