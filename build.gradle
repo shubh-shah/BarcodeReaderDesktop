@@ -62,10 +62,10 @@ task pack(type: Copy) {
     into file("$buildDir/Barcode Reader/")
 }
 
-task packIns(type: Exec) {
+task packWin(type: Exec) {
 	dependsOn pack
 	workingDir="${buildDir}"
-	commandLine 'cmd', '/c', "jpackage --type exe --app-image \"Barcode Reader\" --name \"Barcode Reader\"  --win-dir-chooser --win-shortcut --win-menu --win-menu-group \"Barcode Reader\""
+	commandLine 'cmd', '/c', "jpackage --type msi --app-image \"Barcode Reader\" --name \"Barcode Reader\"  --win-dir-chooser --win-shortcut --win-menu --win-menu-group \"Barcode Reader\""
 }
 
 copyFiles.mustRunAfter(makePretty)
