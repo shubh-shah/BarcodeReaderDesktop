@@ -1,6 +1,8 @@
 # BarcodeReaderDesktop
 Read barcodes and feed them to your desktop with your mobile.   
-No need to buy a scanner. 
+Transform your phone into a barcode reader.   
+No need to buy a scanner.   
+Get the mobile app [here](https://github.com/shubh-shah/BarcodeReaderMobile).
 Get a release from github or you can build it yourself (Requires JDK15).
 
 ### Windows
