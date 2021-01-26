@@ -5,6 +5,7 @@ Get a release from github or you can build it yourself (Requires JDK15).
 
 ### Windows
 + Might need [Visual C++ Resistributable 2015](https://www.microsoft.com/en-in/download/details.aspx?id=48145 "Link to Microsoft download page") on windows to run because of how jpackage makes native launchers.
++ Needs network access(Obviously).
 + To start the server at boot, add a shortcut to server.exe in the startup directory (%USER_DIR%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup).
 
 ### Linux
