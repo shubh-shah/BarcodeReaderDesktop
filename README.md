@@ -10,6 +10,6 @@ Get a release from github or you can build it yourself (Requires JDK15).
 
 ### Linux
 + The app must run in the directory above bin(Barcode Reader) in linux, GUI shortcut created by default does not have a working start server button (Because it doesn't start the app in the directory I expected)
-+ If the start app button does not work, just run server.exe from the bin directory.
++ If the start app button does not work, just run server from the bin directory.
 + To start the server at boot, go to settings and search Startup Applications, add server to the list.
 + Haven't really used on linux but it should theoretically work.
