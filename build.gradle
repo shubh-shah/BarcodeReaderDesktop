@@ -31,23 +31,86 @@ task copyFiles(type: Copy) {
 
 task genJre(type: Exec) {
 	workingDir="${buildDir}"
-	commandLine 'cmd', '/c', "jlink --add-modules java.base,java.desktop,java.logging,java.naming,java.management,java.instrument,java.security.jgss --output jruntime --strip-debug --no-header-files --no-man-pages --strip-native-commands --compress 2"
+    if(System.getProperty("os.name").startsWith("Windows")){
+    	commandLine 'cmd', '/c', "jlink --add-modules java.base,java.desktop,java.logging,java.naming,java.management,java.instrument,java.security.jgss --output jruntime --strip-debug --no-header-files --no-man-pages --strip-native-commands --compress 2"
+    }else if(System.getProperty("os.name").startsWith("Linux")){
+        commandLine "jlink", "--add-modules", "java.base,java.desktop,java.logging,java.naming,java.management,java.instrument,java.security.jgss", 
+                "--output", "jruntime", 
+                "--strip-debug", 
+                "--no-header-files", 
+                "--no-man-pages", 
+                "--strip-native-commands", 
+                "--compress", "2"
+    }
 }
 
+//All of this is beacuse --add-launcher for jdk15 does not work, remove after it starts working
 task packApp(type: Exec){
 	workingDir="${buildDir}"
-	commandLine 'cmd', '/c', "jpackage --type app-image -n \"Barcode Reader\" --app-version ${version} --description \"Barcode Reader Companion\" --vendor \"Shubh Shah\""+
+    if(System.getProperty("os.name").startsWith("Windows")){
+	    commandLine 'cmd', '/c', "jpackage --type app-image -n \"Barcode Reader\" --app-version ${version} --description \"Barcode Reader Companion\" --vendor \"Shubh Shah\""+
                 " -i toPackage --main-jar app-${version}.jar --icon ../resources/logo_br.ico --runtime-image jruntime"
+    }else if(System.getProperty("os.name").startsWith("Linux")){
+	    commandLine "jpackage", 
+                "--type", "app-image", 
+                "-n", "Barcode Reader", 
+                "--app-version", "${version}", 
+                "--description", "Barcode Reader Companion", 
+                "--vendor", "Shubh Shah",
+                "-i", "toPackage", 
+                "--main-jar", "app-${version}.jar", 
+                "--icon", "../resources/logo_br.png", 
+                "--runtime-image", "jruntime"
+    }
 }
+
 task packServer(type: Exec){
 	workingDir="${buildDir}"
-    commandLine 'cmd', '/c', "jpackage --type app-image -n \"server\" --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\""+
+    if(System.getProperty("os.name").startsWith("Windows")){
+        commandLine 'cmd', '/c', "jpackage --type app-image -n \"server\" --app-version ${version} --description \"Barcode Reader Server Companion\" --vendor \"Shubh Shah\""+
                 " -i toPackage --main-jar server-${version}.jar --icon ../resources/logo_br.ico --runtime-image jruntime"
+    }else if(System.getProperty("os.name").startsWith("Linux")){
+	    commandLine "jpackage", 
+                "--type", "app-image", 
+                "-n", "server", 
+                "--app-version", "${version}", 
+                "--description", "Barcode Reader Server Companion", 
+                "--vendor", "Shubh Shah",
+                "-i", "toPackage", 
+                "--main-jar", "server-${version}.jar", 
+                "--icon", "../resources/logo_br.png", 
+                "--runtime-image", "jruntime"
+    }
 }
 
 task copyConfig(type: Copy){
-    from file("$buildDir/server/app/server.cfg")
-    into file("$buildDir/Barcode Reader/app")
+    if(System.getProperty("os.name").startsWith("Windows")){
+        from file("$buildDir/server/app/server.cfg")
+        into file("$buildDir/Barcode Reader/app")
+    }else if(System.getProperty("os.name").startsWith("Linux")){
+        from file("$buildDir/server/lib/app/server.cfg")
+        into file("$buildDir/Barcode Reader/lib/app")
+    }
+}
+
+task copyIcon(type: Copy) {
+    if(System.getProperty("os.name").startsWith("Windows")){
+        from file("$buildDir/server/server.ico")
+        into file("$buildDir/Barcode Reader/")
+    }else if(System.getProperty("os.name").startsWith("Linux")){
+        from file("$buildDir/server/lib/server.png")
+        into file("$buildDir/Barcode Reader/lib/")
+    }
+}
+
+task copyExec(type: Copy) {
+    if(System.getProperty("os.name").startsWith("Windows")){
+        from file("$buildDir/server/server.exe")
+        into file("$buildDir/Barcode Reader/")
+    }else if(System.getProperty("os.name").startsWith("Linux")){
+        from file("$buildDir/server/bin/server")
+        into file("$buildDir/Barcode Reader/bin/")
+    }
 }
 
 task pack(type: Copy) {
@@ -57,15 +120,22 @@ task pack(type: Copy) {
     dependsOn packApp
     dependsOn packServer
     dependsOn copyConfig
-    from file("$buildDir/server/server.exe")
-    from file("$buildDir/server/server.ico")
-    into file("$buildDir/Barcode Reader/")
+    dependsOn copyExec
+    dependsOn copyIcon
 }
 
-task packWin(type: Exec) {
+task packInstaller(type: Exec) {
 	dependsOn pack
 	workingDir="${buildDir}"
-	commandLine 'cmd', '/c', "jpackage --type msi --app-image \"Barcode Reader\" --name \"Barcode Reader\"  --win-dir-chooser --win-shortcut --win-menu --win-menu-group \"Barcode Reader\""
+    if(System.getProperty("os.name").startsWith("Windows")){	
+        commandLine 'cmd', '/c', "jpackage --type msi --app-image \"Barcode Reader\" --name \"Barcode Reader\"  --win-dir-chooser --win-shortcut --win-menu --win-menu-group \"Barcode Reader\""
+    }
+    else if(System.getProperty("os.name").startsWith("Linux")){
+        commandLine "jpackage", 
+                "--type", "deb", 
+                "--app-image", "Barcode Reader", 
+                "--name", "Barcode Reader"
+    }
 }
 
 copyFiles.mustRunAfter(makePretty)
@@ -76,3 +146,7 @@ packApp.mustRunAfter(copyFiles)
 packServer.mustRunAfter(copyFiles)
 copyConfig.mustRunAfter(packApp)
 copyConfig.mustRunAfter(packServer)
+copyExec.mustRunAfter(packApp)
+copyExec.mustRunAfter(packServer)
+copyIcon.mustRunAfter(packApp)
+copyIcon.mustRunAfter(packServer)

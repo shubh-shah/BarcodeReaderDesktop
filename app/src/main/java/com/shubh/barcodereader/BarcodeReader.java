@@ -68,6 +68,7 @@ public class BarcodeReader extends javax.swing.JFrame {
         imagePanel = new javax.swing.JPanel();
         backButton = new javax.swing.JButton();
         imageLabel = new javax.swing.JLabel();
+        refreshButton = new javax.swing.JButton();
         footerPanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
 
@@ -75,7 +76,7 @@ public class BarcodeReader extends javax.swing.JFrame {
         setTitle("Barcode Reader\n");
         setIconImage((new javax.swing.ImageIcon(getClass().getResource("/static/logo_br.png"))).getImage());
 
-        headerPanel.setBackground(new java.awt.Color(53, 155, 241));
+        headerPanel.setBackground(new java.awt.Color(0, 89, 160));
         headerPanel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         headerPanel.setInheritsPopupMenu(true);
 
@@ -89,7 +90,6 @@ public class BarcodeReader extends javax.swing.JFrame {
         shutdownButton.setToolTipText("Shutdown Server");
         shutdownButton.setBorderPainted(false);
         shutdownButton.setContentAreaFilled(false);
-        shutdownButton.setOpaque(false);
         shutdownButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 shutdownButtonActionPerformed(evt);
@@ -155,7 +155,7 @@ public class BarcodeReader extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonPanelLayout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 107, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pairButton, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -190,14 +190,27 @@ public class BarcodeReader extends javax.swing.JFrame {
 
         imageLabel.setIcon(new javax.swing.ImageIcon(System.getProperty("user.home")+"/QRImage.png"));
 
+        refreshButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/static/refr.png"))); // NOI18N
+        refreshButton.setBorderPainted(false);
+        refreshButton.setContentAreaFilled(false);
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout imagePanelLayout = new javax.swing.GroupLayout(imagePanel);
         imagePanel.setLayout(imagePanelLayout);
         imagePanelLayout.setHorizontalGroup(
             imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, imagePanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(imagePanelLayout.createSequentialGroup()
-                .addContainerGap(185, Short.MAX_VALUE)
-                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(185, Short.MAX_VALUE))
+                .addContainerGap(209, Short.MAX_VALUE)
+                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(209, Short.MAX_VALUE))
             .addGroup(imagePanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -206,9 +219,10 @@ public class BarcodeReader extends javax.swing.JFrame {
         imagePanelLayout.setVerticalGroup(
             imagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, imagePanelLayout.createSequentialGroup()
-                .addContainerGap(32, Short.MAX_VALUE)
-                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addComponent(refreshButton)
+                .addGap(21, 21, 21)
+                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -238,7 +252,7 @@ public class BarcodeReader extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(headerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(cardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
+            .addComponent(cardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(footerPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -332,7 +346,14 @@ public class BarcodeReader extends javax.swing.JFrame {
         else{
             statusLabel.setText("Starting Server...");
         }
-        ProcessBuilder pb = new ProcessBuilder("./server.exe");//,"myArg1", "myArg2"
+        ProcessBuilder pb;
+        if(System.getProperty("os.name").startsWith("Windows")){
+            pb = new ProcessBuilder("./server.exe");
+        }else if(System.getProperty("os.name").startsWith("Linux")){
+            pb = new ProcessBuilder("./bin/server");
+        }else{
+            pb = new ProcessBuilder("./bin/server");
+        }
         pb.directory(new File("."));
         try {
             pb.start();
@@ -342,6 +363,35 @@ public class BarcodeReader extends javax.swing.JFrame {
             Logger.getLogger(BarcodeReader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_startupButtonActionPerformed
+
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+        try{
+            URL obj = new URL(url+"generate-qr");
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", USER_AGENT);
+            con.setConnectTimeout(1000);
+
+            int responseCode = con.getResponseCode();
+            if(responseCode>=200 && responseCode<300){//responseCode == HttpURLConnection.HTTP_OK
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String output;
+                StringBuffer response = new StringBuffer();
+
+                while ((output = in.readLine()) != null) {
+                    response.append(output);
+                }
+                in.close();
+            }            
+            imageLabel.setIcon(new javax.swing.ImageIcon(javax.imageio.ImageIO.read(new File(System.getProperty("user.home")+"/QRImage.png"))));
+            imageLabel.repaint();
+            statusLabel.setText("Server Online");
+        }
+        catch(IOException e){
+            statusLabel.setText("Server Offline");
+            Logger.getLogger(BarcodeReader.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }//GEN-LAST:event_refreshButtonActionPerformed
 
     private boolean checkConnection(){        
         try{
@@ -383,7 +433,7 @@ public class BarcodeReader extends javax.swing.JFrame {
         try {
                 javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 //            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
+//                if ("FlatDarkLaf".equals(info.getName())) {
 //                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
 //                    break;
 //                }
@@ -421,6 +471,7 @@ public class BarcodeReader extends javax.swing.JFrame {
     private javax.swing.JPanel imagePanel;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton pairButton;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JButton shutdownButton;
     private javax.swing.JButton startupButton;
     private javax.swing.JLabel statusLabel;
