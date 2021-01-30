@@ -94,7 +94,7 @@ public class BarcodeReaderApplication {
 		}
 		//For password check
 		if(req_str.equals("")){
-			System.out.println("Got a ping");
+			System.out.println("Got a check");
 			return "Success";
 		}
 		//To recieve keystrokes
