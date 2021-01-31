@@ -134,7 +134,8 @@ task packInstaller(type: Exec) {
         commandLine "jpackage", 
                 "--type", "deb", 
                 "--app-image", "Barcode Reader", 
-                "--name", "Barcode Reader"
+                "--name", "Barcode Reader",
+                "--linux-shortcut"
     }
 }
 

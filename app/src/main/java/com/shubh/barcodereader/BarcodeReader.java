@@ -352,7 +352,7 @@ public class BarcodeReader extends javax.swing.JFrame {
         }else if(System.getProperty("os.name").startsWith("Linux")){
             pb = new ProcessBuilder("./bin/server");
         }else{
-            pb = new ProcessBuilder("./bin/server");
+            pb = new ProcessBuilder("./server");
         }
         pb.directory(new File("."));
         try {
